@@ -20,17 +20,18 @@ module MathCaptcha
         captcha.to_secret
       end
     end
-    
+
     module ClassMethods
       def has_captcha
         include InstanceMethods
         attr_accessor :captcha_solution
         dont_skip_captcha!
-        validates_presence_of :captcha_solution, 
-          :on => :create, :message => "can't be blank", 
+        validates_presence_of :captcha_solution,
+          :on => :create, :message => "can't be blank",
           :unless => Proc.new {|record| record.skip_captcha? }
-        validate_on_create :must_solve_captcha,
-          :unless => Proc.new {|record| record.skip_captcha? }
+        validate :must_solve_captcha,
+          :unless => Proc.new {|record| record.skip_captcha? },
+          :on => :create
       end
       def skip_captcha!
         @@skip_captcha = true
